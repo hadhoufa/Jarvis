@@ -1,4 +1,5 @@
 [app]
+android.accept_sdk_license = True
 title = Jarvis Spider
 package.name = jarvisspider
 package.domain = org.jarvis
