@@ -16,7 +16,11 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
+          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libffi-dev libssl-dev wget
+          wget https://github.com/Kitware/CMake/releases/download/v3.10.2/cmake-3.10.2-Linux-x86_64.tar.gz
+          tar -xzf cmake-3.10.2-Linux-x86_64.tar.gz
+          sudo cp -r cmake-3.10.2-Linux-x86_64/bin/* /usr/local/bin/
+          sudo cp -r cmake-3.10.2-Linux-x86_64/share/* /usr/local/share/
           pip3 install --user --upgrade buildozer Cython virtualenv python-for-android
 
       - name: Manual Android SDK Setup
