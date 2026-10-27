@@ -13,14 +13,24 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
           pip3 install --user --upgrade buildozer Cython virtualenv python-for-android
+
+      - name: Manual Android SDK Setup
+        run: |
+          export SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
+          mkdir -p $SDK_ROOT/cmdline-tools
+          cd $SDK_ROOT/cmdline-tools
+          curl -L -o tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          unzip -q tools.zip
+          mv cmdline-tools 9.0
+          mkdir -p $SDK_ROOT/tools
+          cp -r 9.0/* $SDK_ROOT/tools/
+          echo "y" | $SDK_ROOT/tools/bin/sdkmanager --licenses || true
+          echo "android.sdk_path = $SDK_ROOT" >> buildozer.spec
 
       - name: Build APK
         run: |
