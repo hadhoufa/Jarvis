@@ -5,7 +5,7 @@ package.domain = org.hadhoufa
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
-requirements = python3,kivy
+requirements = python3,kivy,jnius>=1.4.0
 orientation = portrait
 fullscreen = 0
 android.permissions = INTERNET
