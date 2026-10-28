@@ -13,6 +13,5 @@ android.api = 33
 android.minapi = 21
 android.ndk = 25b
 android.sdk_path = ./android-sdk
-android.accept_sdk_license = True
-android.skip_update = True
 log_level = 2
+android.accept_sdk_license = True
