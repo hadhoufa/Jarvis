@@ -27,16 +27,17 @@ jobs:
         run: |
           pip3 install --user --upgrade buildozer Cython==0.29.36 virtualenv
 
-      - name: Fix sdkmanager Path (Symlink)
+      - name: Download Legacy SDK Tools (Forced)
         run: |
+          # إنشاء مجلد SDK المتوقع
           SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
-          # إنشاء المجلد الذي يتوقعه Buildozer
-          mkdir -p $SDK_ROOT/tools/bin
-          # البحث عن sdkmanager الحقيقي وإنشاء رابط رمزي له
-          REAL_SDKMANAGER=$(find $SDK_ROOT -name sdkmanager -type f | head -n 1)
-          if [ -n "$REAL_SDKMANAGER" ]; then
-            ln -sf $REAL_SDKMANAGER $SDK_ROOT/tools/bin/sdkmanager
-          fi
+          mkdir -p $SDK_ROOT
+          cd $SDK_ROOT
+          # تنزيل الأدوات القديمة التي تحتوي على sdkmanager في tools/bin
+          curl -L -O https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
+          unzip -q sdk-tools-linux-4333796.zip
+          # الموافقة على التراخيص
+          echo "y" | $SDK_ROOT/tools/bin/sdkmanager --licenses || true
 
       - name: Build APK
         run: |
