@@ -1,4 +1,4 @@
-name: Hardened Build APK
+name: Final Build
 
 on:
   push:
@@ -8,82 +8,30 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-
-      - name: Install System Dependencies (Hardened)
+      - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            build-essential \
-            git \
-            zip \
-            unzip \
-            openjdk-17-jdk \
-            lib32stdc++6 \
-            lib32z1 \
-            lib32ncurses6 \
-            libltdl-dev \
-            autoconf \
-            automake \
-            libtool \
-            pkg-config \
-            zlib1g-dev \
-            libncurses5-dev \
-            libncursesw5-dev \
-            cmake \
-            libffi-dev \
-            libssl-dev \
-            ccache
-
-      - name: Prepare and Hardening buildozer.spec
+          sudo apt-get install -y build-essential git zip unzip openjdk-17-jdk lib32stdc++6 lib32z1 lib32ncurses6 libltdl-dev autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
+      - name: Prepare buildozer.spec
         run: |
-          if [ ! -f buildozer.spec ]; then
-            pip install buildozer
-            buildozer init
-          fi
-          # Force correct settings
+          if [ ! -f buildozer.spec ]; then pip install buildozer && buildozer init; fi
           sed -i 's/^requirements = .*/requirements = python3,kivy,pyjnius/' buildozer.spec
           sed -i 's/^android.accept_sdk_license = .*/android.accept_sdk_license = True/' buildozer.spec
-          sed -i 's/^android.archs = .*/android.archs = arm64-v8a/' buildozer.spec
-          # Enable ccache for faster builds
-          sed -i 's/^# android.ndk_api = .*/android.ndk_api = 21/' buildozer.spec
-
-      - name: Install Buildozer and Cython
-        run: |
-          python -m pip install --upgrade pip
-          pip install buildozer cython
-
-      - name: Build APK with Full Logging
+      - name: Install Buildozer
+        run: pip install buildozer cython
+      - name: Build APK
         run: |
           if [ ! -f main.py ] && [ -f app.py ]; then mv app.py main.py; fi
-          buildozer android debug 2>&1 | tee build.log
+          buildozer android debug
         env:
           DEBIAN_FRONTEND: noninteractive
-
-      - name: Create Release and Upload APK
-        if: success()
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v1.0.${{ github.run_number }}
-          name: Release v1.0.${{ github.run_number }}
-          files: bin/*.apk
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Upload Build Log (For Debugging)
-        if: failure()
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: build-log
-          path: build.log
+          name: kivy-apk
+          path: bin/*.apk
