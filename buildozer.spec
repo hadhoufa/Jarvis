@@ -13,5 +13,3 @@ android.permissions = INTERNET
 android.api = 30
 android.minapi = 21
 android.archs = arm64-v8a
-log_level = 2
-p4a.branch = master
