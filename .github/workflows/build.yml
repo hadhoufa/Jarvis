@@ -20,20 +20,16 @@ jobs:
       - name: FIX EVERYTHING FIRST
         run: |
           echo "=== STARTING COMPREHENSIVE FIXES ==="
-          # Fix main.py
           if [ ! -f main.py ] && [ -f app.py ]; then
             mv app.py main.py
             echo "Fixed: Renamed app.py to main.py"
           fi
-          # Fix buildozer.spec
           if [ ! -f buildozer.spec ]; then
             buildozer init
             echo "Fixed: Created buildozer.spec"
           fi
           sed -i 's/requirements = .*/requirements = python3,kivy,pyjnius/' buildozer.spec
           sed -i 's/android.accept_sdk_license = False/android.accept_sdk_license = True/' buildozer.spec
-          echo "Fixed: Updated buildozer.spec settings"
-          # Clean old dependencies
           sudo apt-get update
           sudo apt-get install -y build-essential git zip unzip openjdk-17-jdk lib32stdc++6 lib32z1 lib32ncurses6 autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
           echo "=== ALL FIXES APPLIED. PROCEEDING TO BUILD ==="
