@@ -22,15 +22,19 @@ jobs:
             build-essential cmake libltdl-dev libbz2-dev libreadline-dev \
             libsqlite3-dev libgdbm-dev libgdbm-compat-dev liblzma-dev uuid-dev
 
-      - name: Install Buildozer (fresh, no p4a pin)
+      - name: Clone python-for-android into a dedicated directory
+        run: |
+          git clone --depth 1 https://github.com/kivy/python-for-android.git $HOME/p4a
+
+      - name: Install Buildozer
         run: |
           pip3 install --user --upgrade buildozer Cython==0.29.36 virtualenv
-          pip3 install --user git+https://github.com/kivy/python-for-android.git@develop
 
       - name: Build APK
         run: |
           export PATH=$PATH:~/.local/bin/
           export BUILDOZER_BUILD_DIR=$HOME/.buildozer
+          export P4A_SOURCE_DIR=$HOME/p4a
           buildozer android debug
 
       - name: Upload APK
