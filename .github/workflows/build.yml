@@ -50,7 +50,6 @@ jobs:
 
       - name: Build APK with Buildozer
         run: |
-          # This command ensures that if main.py is missing but app.py exists, it renames it.
           if [ ! -f main.py ] && [ -f app.py ]; then mv app.py main.py; fi
           buildozer android debug
         env:
