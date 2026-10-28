@@ -1,4 +1,4 @@
-name: Auto-Heal Build APK
+name: Ultimate Auto-Heal Build
 
 on:
   push:
@@ -8,9 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -18,67 +17,52 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install system dependencies
+      - name: Install Dependencies
         id: deps
         continue-on-error: true
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            build-essential \
-            git \
-            zip \
-            unzip \
-            openjdk-17-jdk \
-            lib32stdc++6 \
-            lib32z1 \
-            lib32ncurses6 \
-            autoconf \
-            automake \
-            libtool \
-            pkg-config \
-            zlib1g-dev \
-            libncurses5-dev \
-            libncursesw5-dev \
-            cmake \
-            libffi-dev \
-            libssl-dev
+          sudo apt-get install -y build-essential git zip unzip openjdk-17-jdk lib32stdc++6 lib32z1 lib32ncurses6 autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
 
       - name: Auto-Fix Dependencies
         if: steps.deps.outcome == 'failure'
         run: |
-          echo "Error detected. Auto-fixing dependencies..."
+          echo "Dependencies failed. Auto-fixing..."
           sed -i '/lib32bz2-1.0/d' .github/workflows/build.yml
           sed -i '/libtinfo5/d' .github/workflows/build.yml
-          git config --global user.name 'Auto-Fixer'
-          git config --global user.email 'auto-fixer@github.com'
+          git config --global user.name 'GitHub Action Bot'
+          git config --global user.email 'action@github.com'
           git add .github/workflows/build.yml
           git commit -m "Auto-Fix: Removed broken dependencies"
           git push
           exit 1
 
-      - name: Install Buildozer and Cython
+      - name: Install Buildozer
         run: |
           python -m pip install --upgrade pip
           pip install buildozer cython
 
-      - name: Build APK with Buildozer
+      - name: Build APK
         id: build_apk
         continue-on-error: true
         run: |
           if [ ! -f main.py ] && [ -f app.py ]; then mv app.py main.py; fi
+          if [ ! -f buildozer.spec ]; then buildozer init; fi
+          sed -i 's/requirements = .*/requirements = python3,kivy,pyjnius/' buildozer.spec
+          sed -i 's/android.accept_sdk_license = False/android.accept_sdk_license = True/' buildozer.spec
           buildozer android debug
         env:
           DEBIAN_FRONTEND: noninteractive
 
-      - name: Auto-Fix Build Spec
+      - name: Auto-Fix Build Failure
         if: steps.build_apk.outcome == 'failure'
         run: |
           echo "Build failed. Auto-fixing buildozer.spec..."
           if [ -f buildozer.spec ]; then
             sed -i 's/requirements = .*/requirements = python3,kivy,pyjnius/' buildozer.spec
             sed -i 's/android.accept_sdk_license = False/android.accept_sdk_license = True/' buildozer.spec
-            git config --global user.name 'Auto-Fixer'
-            git config --global user.email 'auto-fixer@github.com'
+            git config --global user.name 'GitHub Action Bot'
+            git config --global user.email 'action@github.com'
             git add buildozer.spec
             git commit -m "Auto-Fix: Corrected buildozer.spec"
             git push
