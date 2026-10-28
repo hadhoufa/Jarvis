@@ -15,3 +15,5 @@ android.ndk = 25b
 android.sdk_path = ./android-sdk
 log_level = 2
 android.accept_sdk_license = True
+android.skip_update = False
+android.accept_sdk_license = True
