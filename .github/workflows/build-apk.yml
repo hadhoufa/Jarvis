@@ -23,7 +23,7 @@ jobs:
 
       - name: Install Buildozer
         run: |
-          pip3 install --user --upgrade buildozer Cython virtualenv python-for-android
+          pip3 install --user --upgrade buildozer Cython==0.29.36 virtualenv python-for-android
 
       - name: Build APK
         run: |
