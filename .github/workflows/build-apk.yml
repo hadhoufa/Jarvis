@@ -26,6 +26,14 @@ jobs:
         run: |
           pip3 install --user --upgrade buildozer Cython==0.29.36 virtualenv
 
+      - name: Pre-inject SDK Licenses (Bypass Interactive Prompt)
+        run: |
+          SDK_LICENSES_DIR="$HOME/.buildozer/android/platform/android-sdk/licenses"
+          mkdir -p "$SDK_LICENSES_DIR"
+          echo -e "\n8933bad161af4b6a5b573652ffc7aaf3aee85a47" > "$SDK_LICENSES_DIR/android-sdk-license"
+          echo -e "\nd56f5187479451eabf01fb78af6dfcb131b33910" > "$SDK_LICENSES_DIR/android-sdk-preview-license"
+          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$SDK_LICENSES_DIR/google-tv-preview-license"
+
       - name: Build APK
         run: |
           export PATH=$PATH:~/.local/bin/
