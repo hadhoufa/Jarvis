@@ -15,4 +15,3 @@ android.archs = arm64-v8a
 android.ndk = 25b
 android.accept_sdk_license = True
 android.sdk_path = ./android-sdk
-android.sdk_path = ./android-sdk
