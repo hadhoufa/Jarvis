@@ -8,43 +8,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Build with Buildozer (Docker)
+        uses: ArtemSBulgakov/buildozer-action@v1
         with:
-          python-version: '3.10'
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip \
-            autoconf automake libtool pkg-config m4 autopoint gettext \
-            zlib1g-dev libncurses5-dev libncursesw5-dev libffi-dev libssl-dev \
-            build-essential cmake libltdl-dev
-
-      - name: Install Buildozer and p4a
-        run: |
-          pip3 install --user --upgrade buildozer Cython virtualenv python-for-android
-
-      - name: Manual Android SDK Setup
-        run: |
-          export SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
-          mkdir -p $SDK_ROOT/cmdline-tools
-          cd $SDK_ROOT/cmdline-tools
-          curl -L -o tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          unzip -q tools.zip
-          mv cmdline-tools 9.0
-          mkdir -p $SDK_ROOT/tools
-          cp -r 9.0/* $SDK_ROOT/tools/
-          echo "y" | $SDK_ROOT/tools/bin/sdkmanager --licenses || true
-          echo "android.sdk_path = $SDK_ROOT" >> buildozer.spec
-
-      - name: Build APK
-        run: |
-          export PATH=$PATH:~/.local/bin/
-          buildozer android debug
+          command: buildozer android debug
+          buildozer_version: stable
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: package
-          path: bin/*.apk
+          path: ${{ steps.buildozer.outputs.filename }}
