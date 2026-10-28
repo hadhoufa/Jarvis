@@ -27,14 +27,16 @@ jobs:
         run: |
           pip3 install --user --upgrade buildozer Cython==0.29.36 virtualenv
 
-      - name: Accept Android SDK Licenses (Forced)
+      - name: Fix sdkmanager Path (Symlink)
         run: |
-          export SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
-          mkdir -p $SDK_ROOT/licenses
-          echo -e "\n8933bad161af4b6a5b573652ffc7aaf3aee85a47" > $SDK_ROOT/licenses/android-sdk-license
-          echo -e "\nd56f5187479451eabf01fb78af6dfcb131b33910" > $SDK_ROOT/licenses/android-sdk-preview-license
-          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > $SDK_ROOT/licenses/google-tv-preview-license
-          echo "y" | $SDK_ROOT/tools/bin/sdkmanager --licenses || true
+          SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
+          # إنشاء المجلد الذي يتوقعه Buildozer
+          mkdir -p $SDK_ROOT/tools/bin
+          # البحث عن sdkmanager الحقيقي وإنشاء رابط رمزي له
+          REAL_SDKMANAGER=$(find $SDK_ROOT -name sdkmanager -type f | head -n 1)
+          if [ -n "$REAL_SDKMANAGER" ]; then
+            ln -sf $REAL_SDKMANAGER $SDK_ROOT/tools/bin/sdkmanager
+          fi
 
       - name: Build APK
         run: |
