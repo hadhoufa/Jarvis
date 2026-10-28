@@ -26,6 +26,17 @@ jobs:
         run: |
           pip3 install --user --upgrade buildozer Cython==0.29.36 virtualenv
 
+      - name: Install Android Build-Tools (Manual)
+        run: |
+          SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
+          mkdir -p $SDK_ROOT/build-tools
+          cd $SDK_ROOT/build-tools
+          # تثبيت build-tools إصدار 33.0.2 (يحتوي على aidl)
+          curl -L -O https://dl.google.com/android/repository/build-tools_r33.0.2-linux.zip
+          unzip -q build-tools_r33.0.2-linux.zip
+          mv android-13 build-tools 2>/dev/null || true
+          rm build-tools_r33.0.2-linux.zip
+
       - name: Pre-inject SDK Licenses
         run: |
           SDK_LICENSES_DIR="$HOME/.buildozer/android/platform/android-sdk/licenses"
