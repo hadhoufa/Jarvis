@@ -20,28 +20,24 @@ jobs:
             autoconf automake libtool pkg-config m4 autopoint gettext \
             zlib1g-dev libncurses5-dev libncursesw5-dev libffi-dev libssl-dev \
             build-essential cmake libltdl-dev libbz2-dev libreadline-dev \
-            libsqlite3-dev libgdbm-dev libgdbm-compat-dev liblzma-dev uuid-dev \
-            ant
+            libsqlite3-dev libgdbm-dev libgdbm-compat-dev liblzma-dev uuid-dev ant
 
       - name: Install Buildozer
         run: |
           pip3 install --user --upgrade buildozer Cython==0.29.36 virtualenv
 
-      - name: Install build-tools manually
+      - name: Pre-accept Android SDK licenses
         run: |
-          SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
-          mkdir -p $SDK_ROOT/build-tools
-          cd $SDK_ROOT/build-tools
-          # تثبيت build-tools إصدار 33.0.2 (متوافق مع API 33)
-          curl -L -O https://dl.google.com/android/repository/build-tools_r33.0.2-linux.zip
-          unzip -q build-tools_r33.0.2-linux.zip
-          mv android-13 build-tools 2>/dev/null || true
-          rm build-tools_r33.0.2-linux.zip
+          mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+          echo -e "\n8933bad161af4b6a5b573652ffc7aaf3aee85a47" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          echo -e "\nd56f5187479451eabf01fb78af6dfcb131b33910" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/google-tv-preview-license
 
       - name: Build APK
         run: |
           export PATH=$PATH:~/.local/bin/
-          buildozer android debug
+          export BUILDOZER_BUILD_DIR=$HOME/.buildozer
+          yes | buildozer android debug || buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
