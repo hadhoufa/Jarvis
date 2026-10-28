@@ -25,18 +25,6 @@ jobs:
         run: |
           pip3 install --user --upgrade buildozer Cython virtualenv python-for-android
 
-      - name: Manual Android SDK Setup
-        run: |
-          export SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
-          mkdir -p $SDK_ROOT/cmdline-tools
-          cd $SDK_ROOT/cmdline-tools
-          curl -L -o tools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          unzip -q tools.zip
-          mv cmdline-tools 9.0
-          mkdir -p $SDK_ROOT/tools
-          cp -r 9.0/* $SDK_ROOT/tools/
-          echo "y" | $SDK_ROOT/tools/bin/sdkmanager --licenses || true
-
       - name: Build APK
         run: |
           export PATH=$PATH:~/.local/bin/
