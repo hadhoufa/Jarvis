@@ -27,19 +27,16 @@ jobs:
         run: |
           pip3 install --user --upgrade buildozer Cython==0.29.36 virtualenv
 
-      - name: Force Symlink sdkmanager (Correct Path)
+      - name: Install build-tools manually
         run: |
           SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
-          # 1. حذف مجلد tools القديم بالكامل
-          rm -rf $SDK_ROOT/tools
-          mkdir -p $SDK_ROOT/tools/bin
-          # 2. البحث عن sdkmanager الحقيقي (في cmdline-tools)
-          REAL_SDKMANAGER=$(find $SDK_ROOT -name sdkmanager -type f | head -n 1)
-          if [ -n "$REAL_SDKMANAGER" ]; then
-            # 3. إنشاء رابط رمزي جديد
-            ln -sf $REAL_SDKMANAGER $SDK_ROOT/tools/bin/sdkmanager
-            chmod +x $SDK_ROOT/tools/bin/sdkmanager
-          fi
+          mkdir -p $SDK_ROOT/build-tools
+          cd $SDK_ROOT/build-tools
+          # تثبيت build-tools إصدار 33.0.2 (متوافق مع API 33)
+          curl -L -O https://dl.google.com/android/repository/build-tools_r33.0.2-linux.zip
+          unzip -q build-tools_r33.0.2-linux.zip
+          mv android-13 build-tools 2>/dev/null || true
+          rm build-tools_r33.0.2-linux.zip
 
       - name: Build APK
         run: |
