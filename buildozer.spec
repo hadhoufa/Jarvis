@@ -1,17 +1,18 @@
 [app]
-title = Jarvis Spider
-package.name = jarvisspider
-package.domain = org.jarvis
+title = Jarvis
+package.name = jarvis
+package.domain = org.hadhoufa
 source.dir = .
-source.include_exts = py
+source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
-requirements = python3,kivy,openssl
+requirements = python3,kivy
 orientation = portrait
 fullscreen = 0
 android.permissions = INTERNET
-android.api = 30
+android.api = 33
 android.minapi = 21
-android.archs = arm64-v8a
 android.ndk = 25b
 android.sdk_path = ./android-sdk
 android.accept_sdk_license = True
+android.skip_update = True
+log_level = 2
