@@ -14,3 +14,4 @@ android.api = 30
 android.minapi = 21
 android.archs = arm64-v8a
 android.ndk = 25b
+android.sdk_path = /data/data/com.termux/files/home/.buildozer/android/platform/android-sdk
