@@ -1,4 +1,4 @@
-name: Final Build
+name: Absolute Automation Build
 
 on:
   push:
@@ -13,24 +13,24 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - name: Install Dependencies
+      - name: Install System Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential git zip unzip openjdk-17-jdk lib32stdc++6 lib32z1 lib32ncurses6 libltdl-dev autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
-      - name: Fix pip and Buildozer
+      - name: Fix pip and Buildozer Versions
         run: |
           python -m pip install --upgrade pip==23.3.2
           pip install buildozer cython==0.29.36
           pip install python-for-android
-      - name: Fix Project Files
+      - name: Auto-Heal Project Files
         run: |
           if [ ! -f main.py ] && [ -f app.py ]; then mv app.py main.py; fi
           if [ ! -f buildozer.spec ]; then pip install buildozer && buildozer init; fi
-          sed -i 's/^requirements = .*/requirements = python3,kivy,pyjnius/' buildozer.spec
+          sed -i 's/^requirements = .*/requirements = python3,kivy,kivymd,pyjnius/' buildozer.spec
           sed -i 's/^android.accept_sdk_license = .*/android.accept_sdk_license = True/' buildozer.spec
+          sed -i 's/^android.archs = .*/android.archs = arm64-v8a/' buildozer.spec
       - name: Build APK
-        run: |
-          buildozer android debug
+        run: buildozer android debug
         env:
           DEBIAN_FRONTEND: noninteractive
       - name: Find and Upload APK
@@ -40,7 +40,7 @@ jobs:
           echo "Found APK at: $APK_PATH"
           mkdir -p output
           cp "$APK_PATH" output/app-debug.apk
-      - name: Upload APK
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: kivy-apk
