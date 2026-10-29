@@ -43,17 +43,14 @@ jobs:
 
       - name: Fix pip and Buildozer Versions
         run: |
-          # Fix the pip error we just encountered
           python -m pip install --upgrade pip==23.3.2
           pip install buildozer cython==0.29.36
-          # Force python-for-android to a stable version
           pip install python-for-android
 
       - name: Fix Project Files (Auto-Heal)
         run: |
           if [ ! -f main.py ] && [ -f app.py ]; then mv app.py main.py; fi
           if [ ! -f buildozer.spec ]; then pip install buildozer && buildozer init; fi
-          # Force correct settings for Kivy and Java
           sed -i 's/^requirements = .*/requirements = python3,kivy,pyjnius/' buildozer.spec
           sed -i 's/^android.accept_sdk_license = .*/android.accept_sdk_license = True/' buildozer.spec
 
