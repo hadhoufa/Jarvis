@@ -1,4 +1,4 @@
-name: Universal Auto-Build
+name: Universal Auto-Build (Java 17 Fix)
 
 on:
   push:
@@ -10,6 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up Java 17 (Critical Fix)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
@@ -17,7 +24,7 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git zip unzip openjdk-17-jdk lib32stdc++6 lib32z1 lib32ncurses6 libltdl-dev autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
+          sudo apt-get install -y build-essential git zip unzip lib32stdc++6 lib32z1 lib32ncurses6 libltdl-dev autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
 
       - name: Fix pip and Buildozer Versions
         run: |
